@@ -211,7 +211,10 @@ public class test : MonoBehaviour {
 
             }
         }
+
+        
         Console.WriteLine(racine.getValue());
+
         return racine;
 
     }

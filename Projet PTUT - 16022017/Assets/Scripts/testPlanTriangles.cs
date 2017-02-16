@@ -15,13 +15,13 @@ public class testPlanTriangles : MonoBehaviour
 
     private int borne_min_precedente;
     private int borne_max_precedente;
-    private decimal echantillonage_precedent;
+    private float echantillonage_precedent;
+    public float echantillonage; // valeur visible par l'utilisateur, qui ne peut être de type Decimal
 
     private int verticesNumber;
     public int borne_min;
     public int borne_max;
-    public decimal echantillonage;
-    public float echan;
+    public decimal echan; // valeur en decimal invisible pour l'utilisateur
 
     private void Awake()
     {
@@ -31,7 +31,7 @@ public class testPlanTriangles : MonoBehaviour
     void Start()
     {
         ScriptTest = GetComponent<test>();
-        Dessiner("");
+        //Dessiner("");
     }
 
 
@@ -62,7 +62,6 @@ public class testPlanTriangles : MonoBehaviour
 
     public void Dessiner(string fonction)
     {
-        echan = 0.1f;
         cpt = 0;
         cptAsc = true;
         this.fonction = fonction;
@@ -73,71 +72,78 @@ public class testPlanTriangles : MonoBehaviour
         borne_min_precedente = borne_min;
         borne_max = 2;
         borne_max_precedente = borne_max;
-        echantillonage = 0.1m;
+        echan = 40m;
+        echantillonage = 40;
         echantillonage_precedent = echantillonage;
 
         drawPlan(mesh);
 
-        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     void LateUpdate()
     {
         /*Si l'échantillonage ou les bornes d'affichage sont modifiées, alors on redessine la fonction */
-        if ((decimal)echan != echantillonage_precedent || borne_min != borne_min_precedente || borne_max != borne_max_precedente)
+        if (echantillonage != echantillonage_precedent || borne_min != borne_min_precedente || borne_max != borne_max_precedente)
         {
-            drawPlan(mesh);
-            echantillonage_precedent = (decimal)echan;
+            echan = (decimal)echantillonage;        
+            echantillonage_precedent = echantillonage;
             borne_min_precedente = borne_min;
             borne_max_precedente = borne_max;
+            drawPlan(mesh);
         }
     }
 
     void drawPlan(Mesh mesh)
     {
         Debug.Log(++toto);
-        echantillonage = (decimal)echan;
         Vector3[] newVertices;
         int[] newTriangles;
 
-        int largeur_plan = (int)((borne_max - borne_min) / echantillonage);
+        int largeur_plan = borne_max - borne_min;
 
         /* Initialisation Vertices*/
-        newVertices = new Vector3[(largeur_plan * largeur_plan)];
+        newVertices = new Vector3[(int)(echan * echan)];
         verticesNumber = newVertices.Length;
         int indice = 0;
 
-        decimal ratio = (decimal)2 / ((decimal)(borne_max) - (decimal)(borne_min));
-        
+        //decimal ratio = (decimal)2 / ((decimal)(borne_max) - (decimal)(borne_min));
+        decimal pas = (borne_max - borne_min) / echan;
         string fct = ";x;2;pow;y;2;pow;+;0.5;pow;-1;*;";
 
         ScriptTest.InitialiserArbre(fonction);
-
-        for (decimal i = borne_min; i < borne_max; i += echantillonage)
+        for (decimal i = borne_min, i2=0; i < borne_max; i += pas ,i2+=(decimal)2/(decimal)echantillonage)
         {
-            for (decimal j = borne_min; j < borne_max; j += echantillonage)
+            for (decimal j = borne_min, j2=0; j < borne_max; j += pas, j2+=2/(decimal)echantillonage)
             {
                 float tmp1 = getValue_Function("", j, i);
                 float tmp = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
-                newVertices[indice] = new Vector3((float)(j)*(float)ratio, tmp, (float)(i)*(float)ratio);
-                indice++;
+                try
+                {
+                    newVertices[indice] = new Vector3((float)(j2), tmp, (float)(i2));
+                }
+                catch
+                {
+                    Debug.Log("i = " + i + " j =" + j + "pas = " + pas); 
+                }
+                    indice++;
+
             }
         }
 
         /*Initialisation triangles*/
-        newTriangles = new int[(largeur_plan * largeur_plan) * 2 * 3]; // 2 = nombre de triangle par case, 3 = nombre de points par triangle
+        newTriangles = new int[((int)(echan * echan)) * 2 * 3]; // 2 = nombre de triangle par case, 3 = nombre de points par triangle
         indice = -1;
-        for (int i = 0; i < largeur_plan * (largeur_plan - 1); i++)
+        for (int i = 0; i < echan * (echan - 1); i++)
         {
-            if ((i + 1) % largeur_plan != 0)
+            if ((i + 1) % echan != 0)
             {
                 newTriangles[++indice] = i;
-                newTriangles[++indice] = i + largeur_plan;
+                newTriangles[++indice] = i + (int)echan;
                 newTriangles[++indice] = i + 1;
 
                 newTriangles[++indice] = i + 1;
-                newTriangles[++indice] = i + largeur_plan;
-                newTriangles[++indice] = i + largeur_plan + 1;
+                newTriangles[++indice] = i + (int)echan;
+                newTriangles[++indice] = i + (int)echan + 1;
             }
         }
 
