@@ -21,6 +21,10 @@ public class GameController : MonoBehaviour
     public AudioClip audioFunny;
 
     public Slider sliderVolume;
+
+    public GameObject panel_bumps;
+
+    public Animation bumps_close;
     
 
 
@@ -100,6 +104,20 @@ public class GameController : MonoBehaviour
      * - Apparition du mainMenuPanel
      * 
      * */
+
+
+    public void Close_BUMPS()
+    {
+
+        if(panel_bumps.active)
+
+           // panel_bumps.PlayAnimation()
+        {
+
+        }
+        
+
+    }
 
     void Update()
     {
