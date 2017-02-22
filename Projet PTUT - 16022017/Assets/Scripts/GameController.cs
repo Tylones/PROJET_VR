@@ -23,9 +23,16 @@ public class GameController : MonoBehaviour
     public Slider sliderVolume;
 
     public GameObject panel_bumps;
+    public GameObject panel_cone;
+    public GameObject panel_fences;
+    public GameObject panel_menu_fonctions;
 
-    public Animation bumps_close;
-    
+
+
+
+
+
+
 
 
 
@@ -43,7 +50,7 @@ public class GameController : MonoBehaviour
         se.AddListener(setTextePlan);
         input.onEndEdit = se;
 
-        clavierCanvas.enabled = false;
+      //  clavierCanvas.enabled = false;
 
 
 
@@ -106,18 +113,38 @@ public class GameController : MonoBehaviour
      * */
 
 
-    public void Close_BUMPS()
+
+
+    public void UnderPanelControl()
     {
 
-        if(panel_bumps.active)
-
-           // panel_bumps.PlayAnimation()
+        if (panel_cone.GetComponent<CanvasGroup>().alpha.ToString() == "1")
         {
-
+            panel_cone.GetComponent<Animator>().SetTrigger("Close");
         }
-        
+
+        if (panel_fences.GetComponent<CanvasGroup>().alpha.ToString() == "1")
+        {
+            panel_fences.GetComponent<Animator>().SetTrigger("Close");
+        }
+
+        if (panel_menu_fonctions.GetComponent<CanvasGroup>().alpha.ToString() == "1")
+        {
+            panel_menu_fonctions.GetComponent<Animator>().SetTrigger("Close");
+        }
+
+        if (panel_bumps.GetComponent<CanvasGroup>().alpha.ToString() == "1")
+        {
+            panel_bumps.GetComponent<Animator>().SetTrigger("Close");
+        }
+
+
 
     }
+
+
+
+
 
     void Update()
     {
