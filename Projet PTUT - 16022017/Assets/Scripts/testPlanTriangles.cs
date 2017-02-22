@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-
+using System;
 
 public class testPlanTriangles : MonoBehaviour
 {
@@ -12,6 +12,7 @@ public class testPlanTriangles : MonoBehaviour
     private int cpt;
     private bool cptAsc;
     private int toto;
+    private const int TAILLE_FCT = 4;
 
     private int borne_min_precedente;
     private int borne_max_precedente;
@@ -111,15 +112,50 @@ public class testPlanTriangles : MonoBehaviour
         string fct = ";x;2;pow;y;2;pow;+;0.5;pow;-1;*;";
 
         ScriptTest.InitialiserArbre(fonction);
-        for (decimal i = borne_min, i2=0; i < borne_max; i += pas ,i2+=(decimal)2/(decimal)echantillonage)
+        decimal ratio = 0;
+        bool isReducted = false;
+        float valeur_max = 0, valeur_min = 0;
+
+        for (decimal i = borne_min; i < borne_max; i += pas)
         {
-            for (decimal j = borne_min, j2=0; j < borne_max; j += pas, j2+=2/(decimal)echantillonage)
+            for (decimal j = borne_min; j < borne_max; j += pas)
+            {
+                float tmp = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
+                if(tmp > valeur_max)
+                {
+                    valeur_max = tmp;
+                }
+                else if(tmp< valeur_min)
+                {
+                    valeur_min = tmp;
+                }
+
+            }
+        }
+        if(valeur_min < -3)
+        {
+            ratio = 3 / Math.Abs((decimal)valeur_min);
+            isReducted = true;
+        }
+        if(valeur_max > 3 && (decimal)valeur_max> Math.Abs((decimal)valeur_min))
+        {
+            ratio = 3 / (decimal)valeur_max;
+            isReducted = true;
+        }
+
+                for (decimal i = borne_min, i2=0; i < borne_max; i += pas ,i2+=(decimal)TAILLE_FCT/(decimal)echantillonage)
+        {
+            for (decimal j = borne_min, j2=0; j < borne_max; j += pas, j2+=TAILLE_FCT/(decimal)echantillonage)
             {
                 float tmp1 = getValue_Function("", j, i);
                 float tmp = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
                 try
                 {
-                    newVertices[indice] = new Vector3((float)(j2), tmp, (float)(i2));
+                    if (isReducted)
+                        newVertices[indice] = new Vector3((float)(j2), (float)ratio * tmp, (float)(i2));
+                    else
+                        newVertices[indice] = new Vector3((float)(j2),  tmp, (float)(i2));
+
                 }
                 catch
                 {
