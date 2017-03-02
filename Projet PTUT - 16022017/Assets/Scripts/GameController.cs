@@ -27,6 +27,8 @@ public class GameController : MonoBehaviour
     public GameObject panel_fences;
     public GameObject panel_menu_fonctions;
 
+    public GameObject porte;
+    public static int cpt_porte=0;
 
 
 
@@ -36,6 +38,7 @@ public class GameController : MonoBehaviour
 
 
 
+    
 
 
 
@@ -113,7 +116,19 @@ public class GameController : MonoBehaviour
      * */
 
 
-
+    public void Gestion_porte()
+    {
+        if (cpt_porte%2==0 )
+        {
+            porte.GetComponent<Animation>().Play("Close");
+            cpt_porte++;
+        }
+        else{
+            porte.GetComponent<Animation>().Play("Open");
+            cpt_porte++;
+        }
+        
+    }
 
     public void UnderPanelControl()
     {
