@@ -159,11 +159,15 @@ public class test : MonoBehaviour {
             return new Operateur(str, false);
         else if (str == "x" || str == "y")
             return new Variable(str);
-        else if (str == "e" || str == "log" || str == "sin" || str == "cos")
+        else if (str == "e" || str == "log" || str == "sin" || str == "cos" || str =="abs" || str =="sign" )
             return new Operateur(str, true);
         else
             return new Nombre(double.Parse(str));
+
+        
     }
+
+    
 
     static Composant createTree(ref string fct, Composant racine, bool first)
     {
@@ -175,7 +179,7 @@ public class test : MonoBehaviour {
             if (hasNext(fct))
             {
                 string toProcede = nextStr(fct);
-                if (toProcede == "/" || toProcede == "+" || toProcede == "*" || toProcede == "-" || toProcede == "pow")
+                if (toProcede == "/" || toProcede == "+" || toProcede == "*" || toProcede == "-" || toProcede == "pow" )
                     racine = new Operateur(toProcede, false);
                 else
                     racine = new Operateur(toProcede, true);
@@ -288,6 +292,10 @@ public class test : MonoBehaviour {
 
                 case "cos":
                     return Math.Cos(droite);
+                case "sign":
+                    return Math.Sign(droite);
+                case "abs":
+                    return Math.Abs(droite);
 
 
             }
