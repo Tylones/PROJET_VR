@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class test : MonoBehaviour {
+public class test : MonoBehaviour
+{
 
     public Composant racine;
+    private double lastValue = 0;
 
     public abstract class Composant : MonoBehaviour
     {
@@ -22,7 +24,7 @@ public class test : MonoBehaviour {
         }
     }
 
-    
+
 
     class Nombre : Composant
     {
@@ -93,7 +95,8 @@ public class test : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         /*
         string input = ";5;8;*;9;5;*;+;";
         racine = createTree(ref input, null, true);
@@ -159,7 +162,7 @@ public class test : MonoBehaviour {
             return new Operateur(str, false);
         else if (str == "x" || str == "y")
             return new Variable(str);
-        else if (str == "e" || str == "log" || str == "sin" || str == "cos")
+        else if (str == "e" || str == "log" || str == "sin" || str == "cos" || str == "sqrt" || str == "abs" || str == "atan" || str == "sign")
             return new Operateur(str, true);
         else
             return new Nombre(double.Parse(str));
@@ -167,9 +170,6 @@ public class test : MonoBehaviour {
 
     static Composant createTree(ref string fct, Composant racine, bool first)
     {
-
-
-
         if (first)
         {
             if (hasNext(fct))
@@ -211,10 +211,7 @@ public class test : MonoBehaviour {
 
             }
         }
-
-        
         Console.WriteLine(racine.getValue());
-
         return racine;
 
     }
@@ -259,38 +256,86 @@ public class test : MonoBehaviour {
             {
                 gauche = calculerArbre(((Operateur)racine).getInd(1), x, y);
             }
-
-            switch ((string)racine.getValue())
+            try
             {
-                case "*":
-                    return droite * gauche;
+                switch ((string)racine.getValue())
+                {
+                    case "*":
+                        lastValue = droite * gauche;
+                        return droite * gauche;
 
-                case "-":
-                    return droite - gauche;
+                    case "-":
+                        lastValue = droite - gauche;
+                        return droite - gauche;
 
-                case "/":
-                    return gauche / droite;
+                    case "/":
+                        lastValue = gauche / droite;
+                        return gauche / droite;
 
-                case "+":
-                    return droite + gauche;
+                    case "+":
+                        lastValue = droite + gauche;
+                        return droite + gauche;
 
-                case "pow":
-                    return Math.Pow(gauche, droite);
+                    case "pow":
+                        lastValue = Math.Pow(gauche, droite);
+                        return Math.Pow(gauche, droite);
 
-                case "e":
-                    return Math.Exp(droite);
+                    case "e":
+                        lastValue = Math.Exp(droite);
+                        return Math.Exp(droite);
 
-                case "log":
-                    return Math.Log(droite);
+                    case "log":
+                        if (Double.IsNaN(Math.Log(droite)))
+                        {
+                            return lastValue;
+                        }
+                        else
+                        {
+                            lastValue = Math.Log(droite);
+                            return Math.Log(droite);
+                        }
+                    case "sin":
+                        lastValue = Math.Sin(droite);
+                        return Math.Sin(droite);
 
-                case "sin":
-                    return Math.Sin(droite);
+                    case "cos":
+                        lastValue = Math.Cos(droite);
+                        return Math.Cos(droite);
 
-                case "cos":
-                    return Math.Cos(droite);
+                    case "sqrt":
+                        if (Double.IsNaN(Math.Sqrt(droite)))
+                        {
+                            return lastValue;
+                        }
+                        else
+                        {
+                            lastValue = Math.Sqrt(droite);
+                            return Math.Sqrt(droite);
+                        }
+                    case "sign":
+                        if (Double.IsNaN(Math.Sign(droite)))
+                        {
+                            return lastValue;
+                        }
+                        else
+                        {
+                            lastValue = Math.Sign(droite);
+                            return Math.Sign(droite);
+                        }
 
-
+                    case "abs":
+                        lastValue = Math.Abs(droite);
+                        return Math.Abs(droite);
+                    case "atan":
+                        lastValue = Math.Atan(droite);
+                        return Math.Atan(droite);
+                }
             }
+            catch (DivideByZeroException e)
+            {
+                return lastValue;
+            }
+
         }
         else if (racine.GetType() == typeof(Nombre))
         {
@@ -310,7 +355,8 @@ public class test : MonoBehaviour {
         return 0;
     }
     // Update is called once per frame
-    void Update () {
-		
-	}
+    void Update()
+    {
+
+    }
 }
