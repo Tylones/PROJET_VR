@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
     public GameObject panel_cone;
     public GameObject panel_fences;
     public GameObject panel_menu_fonctions;
+    public GameObject panel_toit;
 
     public GameObject porte;
     public static int cpt_porte=0;
@@ -172,7 +173,10 @@ public class GameController : MonoBehaviour
         {
             panel_bumps.GetComponent<Animator>().SetTrigger("Close");
         }
-
+        if (panel_toit.GetComponent<CanvasGroup>().alpha.ToString() == "1")
+        {
+            panel_toit.GetComponent<Animator>().SetTrigger("Close");
+        }
 
 
     }

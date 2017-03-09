@@ -195,6 +195,10 @@ public class testPlanTriangles : MonoBehaviour
         mesh.triangles = newTriangles;
         mesh.uv = uvs;
 
+        gameObject.AddComponent<MeshCollider>();
+        gameObject.GetComponent<MeshCollider>().convex = true;
+        gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+
         mesh.RecalculateNormals();
 
 
