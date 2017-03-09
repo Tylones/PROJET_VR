@@ -6,7 +6,9 @@ public class WandController : MonoBehaviour {
 
     private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip; // Referencement au bouton "grip" du controller
     private Valve.VR.EVRButtonId triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger; //Referencement à la gachette du controller
+    private Valve.VR.EVRButtonId padLeftButton = Valve.VR.EVRButtonId.k_EButton_ApplicationMenu;
 
+    public ScriptGameController gc;
 
     private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObj.index); } } 
     private SteamVR_TrackedObject trackedObj;
@@ -23,14 +25,17 @@ public class WandController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        
         trackedObj = GetComponent<SteamVR_TrackedObject>();
         objetPlan = GameObject.Find("Plan");
+        gc = GetComponent<ScriptGameController>();
         Debug.Log("");
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	    if(controller == null)
+        //gc = GetComponent<GameController>();
+        if (controller == null)
         {
             Debug.Log("Controller non initialise");
             return;
@@ -83,6 +88,13 @@ public class WandController : MonoBehaviour {
 
         if (controller.GetPressUp(triggerButton))
             Debug.Log("Bouton 'grip' relache");
+
+        if (controller.GetPressDown(padLeftButton))
+        {
+            Debug.Log("Pad Presse");
+            gc.NiquerPutainDePanneau();
+            //  gc.NiquerPutainDePanneau();
+        }
     }
 
     private void OnTriggerEnter(Collider collider)
