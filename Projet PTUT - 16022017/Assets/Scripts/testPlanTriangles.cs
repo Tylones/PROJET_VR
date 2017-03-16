@@ -106,34 +106,34 @@ public class testPlanTriangles : MonoBehaviour
 
         decimal pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
 
-        if (pas.ToString().Length == 30)
-        {
+        //if (pas.ToString().Length == 30)
+        //{
 
-            int difference = 1;
-            bool found = false;
-            while (!found)
-            {
-                if (((decimal)(borne_max - borne_min) / ((decimal)echantillonage + difference)).ToString().Length < 30)
-                {
-                    echantillonage += difference;
-                    echantillonage_precedent = echantillonage;
-                    pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
-                    found = true;
-                }
-                else
-                {
-                    if (((decimal)(borne_max - borne_min) / ((decimal)echantillonage - difference)).ToString().Length < 30)
-                    {
-                        echantillonage -= difference;
-                        echantillonage_precedent = echantillonage;
-                        pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
-                        found = true;
-                    }
-                    else
-                        difference++;
-                }
-            }
-        }
+        //    int difference = 1;
+        //    bool found = false;
+        //    while (!found)
+        //    {
+        //        if (((decimal)(borne_max - borne_min) / ((decimal)echantillonage + difference)).ToString().Length < 30)
+        //        {
+        //            echantillonage += difference;
+        //            echantillonage_precedent = echantillonage;
+        //            pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
+        //            found = true;
+        //        }
+        //        else
+        //        {
+        //            if (((decimal)(borne_max - borne_min) / ((decimal)echantillonage - difference)).ToString().Length < 30)
+        //            {
+        //                echantillonage -= difference;
+        //                echantillonage_precedent = echantillonage;
+        //                pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
+        //                found = true;
+        //            }
+        //            else
+        //                difference++;
+        //        }
+        //    }
+        //}
 
         /* Initialisation Vertices*/
         newVertices = new Vector3[(echantillonage * echantillonage)];
@@ -173,9 +173,9 @@ public class testPlanTriangles : MonoBehaviour
             isReducted = true;
         }
 
-        for (decimal i = borne_min, i2 = 0; i < borne_max; i += (decimal)(borne_max - borne_min) / (decimal)echantillonage, i2 += (decimal)TAILLE_FCT / (decimal)echantillonage)
+        for (decimal i = borne_min, i2 = 0, i3 = 0; i3 < echantillonage; i += (decimal)(borne_max - borne_min) / (decimal)echantillonage, i2 += (decimal)TAILLE_FCT / (decimal)echantillonage, i3++)
         {
-            for (decimal j = borne_min, j2 = 0; j < borne_max; j += (decimal)(borne_max - borne_min) / (decimal)echantillonage, j2 += TAILLE_FCT / (decimal)echantillonage)
+            for (decimal j = borne_min, j2 = 0, j3 = 0; j3 < echantillonage; j += (decimal)(borne_max - borne_min) / (decimal)echantillonage, j2 += TAILLE_FCT / (decimal)echantillonage, j3++)
             {
                 float value = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
                 try
