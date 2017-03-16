@@ -31,6 +31,7 @@ public class test : MonoBehaviour
         public Nombre(double nb)
         {
             value = nb;
+            
         }
 
 

@@ -6,7 +6,7 @@ public class WandController : MonoBehaviour {
 
     private Valve.VR.EVRButtonId gripButton = Valve.VR.EVRButtonId.k_EButton_Grip; // Referencement au bouton "grip" du controller
     private Valve.VR.EVRButtonId triggerButton = Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger; //Referencement à la gachette du controller
-    private Valve.VR.EVRButtonId padLeftButton = Valve.VR.EVRButtonId.k_EButton_ApplicationMenu;
+    private Valve.VR.EVRButtonId MenuButton = Valve.VR.EVRButtonId.k_EButton_ApplicationMenu;
 
     public ScriptGameController gc;
 
@@ -28,7 +28,7 @@ public class WandController : MonoBehaviour {
         
         trackedObj = GetComponent<SteamVR_TrackedObject>();
         objetPlan = GameObject.Find("Plan");
-        gc = GetComponent<ScriptGameController>();
+        gc = GetComponentInParent<ScriptGameController>();
         Debug.Log("");
 	}
 	
@@ -75,7 +75,6 @@ public class WandController : MonoBehaviour {
         if (controller.GetPressUp(gripButton))
         {
             objetPlan.GetComponent<ReturnToLocation>().StartDrift();
-            Debug.Log("ouiii");
         }
             
         if (controller.GetPressUp(triggerButton) && interactingObject != null)
@@ -83,17 +82,11 @@ public class WandController : MonoBehaviour {
             interactingObject.endInteraction(this); 
         }
 
-        if (controller.GetPressDown(triggerButton))
-            Debug.Log("Bouton 'grip' enclanche");
 
-        if (controller.GetPressUp(triggerButton))
-            Debug.Log("Bouton 'grip' relache");
 
-        if (controller.GetPressDown(padLeftButton))
+        if (controller.GetPressDown(MenuButton))
         {
-            Debug.Log("Pad Presse");
             gc.hidePannel();
-            //  gc.NiquerPutainDePanneau();
         }
     }
 

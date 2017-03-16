@@ -225,9 +225,15 @@ public class ScriptGameController : MonoBehaviour
 
     public void deleteInputClavier()
     {
-        input.text = input.text.Remove(input.text.Length - 1);
-        input.text = input.text.Remove(input.text.Length - 1);
+        if(input.text.Length != 1)
+        {
+            input.text = input.text.Remove(input.text.Length - 1);
 
+            input.text = input.text.Remove(input.text.Length - 1);
+        }
+
+
+       
 
 
     }
@@ -337,7 +343,7 @@ public class ScriptGameController : MonoBehaviour
 
     public void OnValueChangedEchantillonage()
     {
-        plan.GetComponent<testPlanTriangles>().echantillonage =  sliderEchantillonage.value;
+        plan.GetComponent<testPlanTriangles>().echantillonage =  (int)sliderEchantillonage.value;
     }
 
     public void hidePannel()

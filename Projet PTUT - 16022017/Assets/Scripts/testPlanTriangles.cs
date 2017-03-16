@@ -5,25 +5,25 @@ using System;
 
 public class testPlanTriangles : MonoBehaviour
 {
-
+    private bool corrigerBug = true;
     public test ScriptTest;
     private string fonction;
     public Mesh mesh;
     private int cpt;
     private bool cptAsc;
-    private int toto;
     private const int TAILLE_FCT = 4;
     private float lastValidValue;
 
     private int borne_min_precedente;
     private int borne_max_precedente;
-    private float echantillonage_precedent;
-    public float echantillonage; // valeur visible par l'utilisateur, qui ne peut être de type Decimal
+    private int echantillonage_precedent;
+    public int echantillonage; // valeur visible par l'utilisateur, qui ne peut être de type Decimal
 
     private int verticesNumber;
     public int borne_min;
     public int borne_max;
-    public decimal echan; // valeur en decimal invisible pour l'utilisateur
+    private GameObject objetPlan;
+
 
     private void Awake()
     {
@@ -32,6 +32,8 @@ public class testPlanTriangles : MonoBehaviour
 
     void Start()
     {
+        objetPlan = GameObject.Find("Plan");
+
         ScriptTest = GetComponent<test>();
         //Dessiner("");
     }
@@ -74,8 +76,7 @@ public class testPlanTriangles : MonoBehaviour
         borne_min_precedente = borne_min;
         borne_max = 2;
         borne_max_precedente = borne_max;
-        echan = 40m;
-        echantillonage = 40;
+        echantillonage = 92;
         echantillonage_precedent = echantillonage;
 
         drawPlan(mesh);
@@ -85,9 +86,8 @@ public class testPlanTriangles : MonoBehaviour
     void LateUpdate()
     {
         /*Si l'échantillonage ou les bornes d'affichage sont modifiées, alors on redessine la fonction */
-        if (echantillonage != echantillonage_precedent || borne_min != borne_min_precedente || borne_max != borne_max_precedente)
+        if ((echantillonage != echantillonage_precedent || borne_min != borne_min_precedente || borne_max != borne_max_precedente) && mesh != null)
         {
-            echan = (decimal)echantillonage;
             echantillonage_precedent = echantillonage;
             borne_min_precedente = borne_min;
             borne_max_precedente = borne_max;
@@ -97,25 +97,54 @@ public class testPlanTriangles : MonoBehaviour
 
     void drawPlan(Mesh mesh)
     {
-        Debug.Log(++toto);
+        mesh.Clear();
+
         Vector3[] newVertices;
         int[] newTriangles;
 
         int largeur_plan = borne_max - borne_min;
 
+        decimal pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
+
+        if (pas.ToString().Length == 30)
+        {
+
+            int difference = 1;
+            bool found = false;
+            while (!found)
+            {
+                if (((decimal)(borne_max - borne_min) / ((decimal)echantillonage + difference)).ToString().Length < 30)
+                {
+                    echantillonage += difference;
+                    echantillonage_precedent = echantillonage;
+                    pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
+                    found = true;
+                }
+                else
+                {
+                    if (((decimal)(borne_max - borne_min) / ((decimal)echantillonage - difference)).ToString().Length < 30)
+                    {
+                        echantillonage -= difference;
+                        echantillonage_precedent = echantillonage;
+                        pas = (decimal)(borne_max - borne_min) / (decimal)echantillonage;
+                        found = true;
+                    }
+                    else
+                        difference++;
+                }
+            }
+        }
+
         /* Initialisation Vertices*/
-        newVertices = new Vector3[(int)(echan * echan)];
+        newVertices = new Vector3[(echantillonage * echantillonage)];
         verticesNumber = newVertices.Length;
         int indice = 0;
-
-        //decimal ratio = (decimal)2 / ((decimal)(borne_max) - (decimal)(borne_min));
-        decimal pas = (borne_max - borne_min) / echan;
-        string fct = ";x;2;pow;y;2;pow;+;0.5;pow;-1;*;";
 
         ScriptTest.InitialiserArbre(fonction);
         decimal ratio = 0;
         bool isReducted = false;
         float valeur_max = 0, valeur_min = 0;
+
 
         for (decimal i = borne_min; i < borne_max; i += pas)
         {
@@ -144,9 +173,9 @@ public class testPlanTriangles : MonoBehaviour
             isReducted = true;
         }
 
-        for (decimal i = borne_min, i2 = 0; i < borne_max; i += pas, i2 += (decimal)TAILLE_FCT / (decimal)echantillonage)
+        for (decimal i = borne_min, i2 = 0; i < borne_max; i += (decimal)(borne_max - borne_min) / (decimal)echantillonage, i2 += (decimal)TAILLE_FCT / (decimal)echantillonage)
         {
-            for (decimal j = borne_min, j2 = 0; j < borne_max; j += pas, j2 += TAILLE_FCT / (decimal)echantillonage)
+            for (decimal j = borne_min, j2 = 0; j < borne_max; j += (decimal)(borne_max - borne_min) / (decimal)echantillonage, j2 += TAILLE_FCT / (decimal)echantillonage)
             {
                 float value = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
                 try
@@ -160,70 +189,60 @@ public class testPlanTriangles : MonoBehaviour
                 }
                 catch
                 {
+                    Debug.Log(indice);
                     if (isReducted)
                         newVertices[indice] = new Vector3((float)(j2), (float)ratio * lastValidValue, (float)(i2));
                     else
                         newVertices[indice] = new Vector3((float)(j2), lastValidValue, (float)(i2));
+
                 }
                 indice++;
-
             }
         }
 
         /*Initialisation triangles*/
-        newTriangles = new int[((int)(echan * echan)) * 2 * 3]; // 2 = nombre de triangle par case, 3 = nombre de points par triangle
+        newTriangles = new int[echantillonage * echantillonage * 2 * 3]; // 2 = nombre de triangle par case, 3 = nombre de points par triangle
         indice = -1;
-        for (int i = 0; i < echan * (echan - 1); i++)
+        for (int i = 0; i < echantillonage * (echantillonage - 1); i++)
         {
-            if ((i + 1) % echan != 0)
+            if ((i + 1) % echantillonage != 0)
             {
                 newTriangles[++indice] = i;
-                newTriangles[++indice] = i + (int)echan;
+                newTriangles[++indice] = i + (int)echantillonage;
                 newTriangles[++indice] = i + 1;
 
                 newTriangles[++indice] = i + 1;
-                newTriangles[++indice] = i + (int)echan;
-                newTriangles[++indice] = i + (int)echan + 1;
+                newTriangles[++indice] = i + (int)echantillonage;
+                newTriangles[++indice] = i + (int)echantillonage + 1;
             }
         }
 
         /*Initialisation UVs*/
-        /*Vector2[] uvs = new Vector2[newVertices.Length];
+        Vector2[] uvs = new Vector2[newVertices.Length];
 
         for (int i = 0; i < uvs.Length; i++)
         {
             uvs[i] = new Vector2(newVertices[i].x, newVertices[i].z);
-        }*/
+        }
 
         mesh.vertices = newVertices;
         mesh.triangles = newTriangles;
-        //mesh.uv = uvs;
+        mesh.uv = uvs;
 
         if (gameObject.GetComponent<MeshCollider>() == null)
         {
             gameObject.AddComponent<MeshCollider>();
             gameObject.GetComponent<MeshCollider>().convex = true;
-            gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
         }
 
         mesh.RecalculateNormals();
 
-
+        gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+        if (corrigerBug)
+        {
+            objetPlan.transform.position = new Vector3(293.1f, 1.814f, -40.623f);
+            corrigerBug = !corrigerBug;
+        }
     }
-
-    float getValue_Function(string fonction, decimal x, decimal z)
-    {
-
-        float result = 0;
-
-        result = (float)(Mathf.Sin((float)(10 * (Mathf.Pow((float)x, 2) + Mathf.Pow((float)z, 2)))) / 10);
-
-        // result = 1 / (15 * (Mathf.Pow((float)x, 2) + Mathf.Pow((float)z, 2)));
-
-        // result = (Mathf.Sin(5 * (float)x) * Mathf.Cos(5 * (float)z)) / 5;
-
-        return result;
-    }
-
 
 }
