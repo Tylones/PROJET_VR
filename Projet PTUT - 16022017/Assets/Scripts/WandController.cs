@@ -92,7 +92,7 @@ public class WandController : MonoBehaviour {
         if (controller.GetPressDown(padLeftButton))
         {
             Debug.Log("Pad Presse");
-            gc.NiquerPutainDePanneau();
+            gc.hidePannel();
             //  gc.NiquerPutainDePanneau();
         }
     }
