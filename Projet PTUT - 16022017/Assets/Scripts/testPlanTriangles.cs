@@ -27,7 +27,7 @@ public class testPlanTriangles : MonoBehaviour
 
     private void Awake()
     {
-         ScriptTest = GetComponent<test>();
+        ScriptTest = GetComponent<test>();
     }
 
     void Start()
@@ -87,7 +87,7 @@ public class testPlanTriangles : MonoBehaviour
         /*Si l'échantillonage ou les bornes d'affichage sont modifiées, alors on redessine la fonction */
         if (echantillonage != echantillonage_precedent || borne_min != borne_min_precedente || borne_max != borne_max_precedente)
         {
-            echan = (decimal)echantillonage;        
+            echan = (decimal)echantillonage;
             echantillonage_precedent = echantillonage;
             borne_min_precedente = borne_min;
             borne_max_precedente = borne_max;
@@ -122,31 +122,31 @@ public class testPlanTriangles : MonoBehaviour
             for (decimal j = borne_min; j < borne_max; j += pas)
             {
                 float tmp = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
-                if(tmp > valeur_max)
+                if (tmp > valeur_max)
                 {
                     valeur_max = tmp;
                 }
-                else if(tmp< valeur_min)
+                else if (tmp < valeur_min)
                 {
                     valeur_min = tmp;
                 }
 
             }
         }
-        if(valeur_min < -3)
+        if (valeur_min < -3)
         {
             ratio = 3 / Math.Abs((decimal)valeur_min);
             isReducted = true;
         }
-        if(valeur_max > 3 && (decimal)valeur_max> Math.Abs((decimal)valeur_min))
+        if (valeur_max > 3 && (decimal)valeur_max > Math.Abs((decimal)valeur_min))
         {
             ratio = 3 / (decimal)valeur_max;
             isReducted = true;
         }
 
-                for (decimal i = borne_min, i2=0; i < borne_max; i += pas ,i2+=(decimal)TAILLE_FCT/(decimal)echantillonage)
+        for (decimal i = borne_min, i2 = 0; i < borne_max; i += pas, i2 += (decimal)TAILLE_FCT / (decimal)echantillonage)
         {
-            for (decimal j = borne_min, j2=0; j < borne_max; j += pas, j2+=TAILLE_FCT/(decimal)echantillonage)
+            for (decimal j = borne_min, j2 = 0; j < borne_max; j += pas, j2 += TAILLE_FCT / (decimal)echantillonage)
             {
                 float value = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
                 try
@@ -165,7 +165,7 @@ public class testPlanTriangles : MonoBehaviour
                     else
                         newVertices[indice] = new Vector3((float)(j2), lastValidValue, (float)(i2));
                 }
-                    indice++;
+                indice++;
 
             }
         }
@@ -199,7 +199,7 @@ public class testPlanTriangles : MonoBehaviour
         mesh.triangles = newTriangles;
         //mesh.uv = uvs;
 
-        if(gameObject.GetComponent<MeshCollider>() == null)
+        if (gameObject.GetComponent<MeshCollider>() == null)
         {
             gameObject.AddComponent<MeshCollider>();
             gameObject.GetComponent<MeshCollider>().convex = true;
@@ -216,7 +216,7 @@ public class testPlanTriangles : MonoBehaviour
 
         float result = 0;
 
-         result = (float)(Mathf.Sin((float)(10 * (Mathf.Pow((float)x, 2) + Mathf.Pow((float)z, 2)))) / 10);
+        result = (float)(Mathf.Sin((float)(10 * (Mathf.Pow((float)x, 2) + Mathf.Pow((float)z, 2)))) / 10);
 
         // result = 1 / (15 * (Mathf.Pow((float)x, 2) + Mathf.Pow((float)z, 2)));
 
@@ -225,5 +225,5 @@ public class testPlanTriangles : MonoBehaviour
         return result;
     }
 
-    
+
 }
