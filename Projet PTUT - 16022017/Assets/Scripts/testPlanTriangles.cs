@@ -243,6 +243,76 @@ public class testPlanTriangles : MonoBehaviour
             objetPlan.transform.position = new Vector3(293.1f, 1.814f, -40.623f);
             corrigerBug = !corrigerBug;
         }
+
+       
     }
 
+
+
+    private void Calculate(ref Vector3[] newVertices, string fonction, decimal pas)
+    {
+
+        ScriptTest.InitialiserArbre(fonction);
+        decimal ratio = 0;
+        bool isReducted = false;
+        float valeur_max = 0, valeur_min = 0;
+
+
+        for (decimal i = borne_min; i < borne_max; i += pas)
+        {
+            for (decimal j = borne_min; j < borne_max; j += pas)
+            {
+                float tmp = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
+                if (tmp > valeur_max)
+                {
+                    valeur_max = tmp;
+                }
+                else if (tmp < valeur_min)
+                {
+                    valeur_min = tmp;
+                }
+
+            }
+        }
+        if (valeur_min < -3)
+        {
+            ratio = 3 / Math.Abs((decimal)valeur_min);
+            isReducted = true;
+        }
+        if (valeur_max > 3 && (decimal)valeur_max > Math.Abs((decimal)valeur_min))
+        {
+            ratio = 3 / (decimal)valeur_max;
+            isReducted = true;
+        }
+        {
+            int indice = 0;
+            for (decimal i = borne_min, i2 = 0, i3 = 0; i3 < echantillonage; i += (decimal)(borne_max - borne_min) / (decimal)echantillonage, i2 += (decimal)TAILLE_FCT / (decimal)echantillonage, i3++)
+            {
+                for (decimal j = borne_min, j2 = 0, j3 = 0; j3 < echantillonage; j += (decimal)(borne_max - borne_min) / (decimal)echantillonage, j2 += TAILLE_FCT / (decimal)echantillonage, j3++)
+                {
+                    float value = (float)ScriptTest.calculerArbre(ScriptTest.racine, (double)j, (double)i);
+                    try
+                    {
+                        if (isReducted)
+                            newVertices[indice] = new Vector3((float)(j2), (float)ratio * value, (float)(i2));
+                        else
+                            newVertices[indice] = new Vector3((float)(j2), value, (float)(i2));
+
+                        lastValidValue = value;
+                    }
+                    catch
+                    {
+                        Debug.Log(indice);
+                        if (isReducted)
+                            newVertices[indice] = new Vector3((float)(j2), (float)ratio * lastValidValue, (float)(i2));
+                        else
+                            newVertices[indice] = new Vector3((float)(j2), lastValidValue, (float)(i2));
+
+                    }
+                    indice++;
+                }
+            }
+
+        }
+    }
 }

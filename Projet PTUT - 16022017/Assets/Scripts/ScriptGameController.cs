@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ScriptGameController : MonoBehaviour
 {
@@ -65,6 +66,8 @@ public class ScriptGameController : MonoBehaviour
         inputMinTxt.GetComponent<InputField>().placeholder.GetComponent<Text>().text = plan.GetComponent<testPlanTriangles>().borne_min.ToString();
 
         inputMaxTxt.GetComponent<InputField>().placeholder.GetComponent<Text>().text = plan.GetComponent<testPlanTriangles>().borne_max.ToString();
+
+        
 
        // porte.GetComponent<Animation>().Play("Close");
 
@@ -260,6 +263,8 @@ public class ScriptGameController : MonoBehaviour
     {
         mainAudio.volume = sliderVolume.value;
     }
+
+   
 
     public void changeAudio(int theme)
     {
